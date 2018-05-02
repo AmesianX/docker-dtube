@@ -1,31 +1,53 @@
-version: "3"
+version: "2.1"
+
+volumes:
+
+  ipfs-data:
+    driver: local
+  dcs-data:
+    driver: local
+  dcs-log:
+    driver: local
+
 services:
+
   ipfs:
-    container_name: "ipfs"
-    expose:
-      - 4001
-      - 8080
+    container_name: ipfs
+    hostname: ipfs
     ports:
-      - 4001:4001
-      - 5001:5001
-      - 8090:8090
+      - 4001:4001             # public swarm address
+      - 127.0.0.1:5001:5001   # api service
+      - 127.0.0.1:8080:8080   # gateway service
     image: ipfs/go-ipfs
     volumes:
-      - ./data:/data/ipfs/
+      - ipfs-data:/data/ipfs/
     command: daemon --routing=dhtclient --enable-gc
     restart: always
 
   dcs:
     build: .
+    image: sofwerx/dcs
     container_name: dcs
+    hostname: dcs
     volumes:
-      - ./data:/opt/dcs/data
-      - ./log:/opt/dcs/log
-    working_dir: /opt/dcs
+      - dcs-data:/opt/dcs/data
+      - dcs-log:/opt/dcs/log
     command: npm start
-    links:
-      - ipfs
-    depends_on:
-      - ipfs
     restart: always
+
+  dtube:
+    container_name: dtube
+    hostname: dtube
+    build: minidtube/
+    image: sofwerx/minidtube
+    command: npm start
+    restart: always
+
+  steem:
+    container_name: steem
+    hostname: steem
+    image: steemit/steem
+    ports:
+      - 2001:2001
+      - 8090:8090
 

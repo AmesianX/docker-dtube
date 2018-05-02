@@ -1,6 +1,6 @@
 const steem = require('steem');
 var ipfsAPI = require('ipfs-api');
-var ipfs = ipfsAPI('localhost', '5001', {protocol: 'http'});
+var ipfs = ipfsAPI(process.env.IPFS_HOST || 'localhost', process.env.IPFS_PORT || '5001', {protocol: process.env.IPFS_PROTO || 'http'});
 var config = require('config.json')('./config.json');
 var Store = require("jfs");
 var db = new Store("data");

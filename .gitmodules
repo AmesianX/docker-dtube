@@ -1,0 +1,3 @@
+[submodule "minidtube"]
+	path = minidtube
+	url = https://github.com/sofwerx/minidtube
